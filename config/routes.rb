@@ -8,7 +8,11 @@ ActionController::Routing::Routes.draw do |map|
   map.help    '/help',    :controller => 'pages', :action => 'help'
 
 
+
   map.home '/', :controller => 'pages', :action => 'home'
+
+
+  map.signup '/signup', :controller => 'users', :action => 'new'
 
   
 #  puts "\nroute draw called: "+ (defined?(map.home)).to_s
