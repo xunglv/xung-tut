@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
 
   validates_format_of :email, :with=>EmailRegex
   validates_uniqueness_of :email, :case_sensitive => false
+  validates_uniqueness_of :name, :case_sensitive => false
 
   validates_confirmation_of :password
   validates_length_of :password, :within => 6..40
@@ -30,6 +31,11 @@ class User < ActiveRecord::Base
 
   def has_password?(submitted_password)
     self.encrypted_password == encrypt(submitted_password)
+  end
+
+  def remember_me!
+    self.remember_token = encrypt("#{salt}--#{id}--#{Time.now.utc}")
+    save_without_validation
   end
 
   def self.authenticate(email, submitted_password)
@@ -43,8 +49,10 @@ class User < ActiveRecord::Base
   private
   
     def encrypt_password
-      self.salt = make_salt
-      self.encrypted_password = encrypt(password)
+      unless password.nil?
+        self.salt = make_salt
+        self.encrypted_password = encrypt(password)
+      end
     end
 
 

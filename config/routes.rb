@@ -2,6 +2,11 @@ ActionController::Routing::Routes.draw do |map|
   # The priority is based upon order of creation: first created -> highest priority.
 
   map.resources :users
+  map.resources :sessions, :only => [:new, :create, :destroy]
+
+  map.signin  '/signin',  :controller => 'sessions', :action => 'new'
+  map.signout '/signout', :controller => 'sessions', :action => 'destroy'
+
 
   map.contact '/contact', :controller => 'pages', :action => 'contact'
   map.about   '/about',   :controller => 'pages', :action => 'about'
@@ -15,7 +20,7 @@ ActionController::Routing::Routes.draw do |map|
   map.signup '/signup', :controller => 'users', :action => 'new'
 
   
-#  puts "\nroute draw called: "+ (defined?(map.home)).to_s
+  #puts "\nroute draw called: "+ (defined?(map.home)).to_s
 
   # You can have the root of your site routed with map.root
   # -- just remember to delete public/index.html.

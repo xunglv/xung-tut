@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100425090436) do
+ActiveRecord::Schema.define(:version => 20100603145347) do
 
   create_table "testers", :force => true do |t|
     t.text "name"
@@ -28,6 +28,9 @@ ActiveRecord::Schema.define(:version => 20100425090436) do
     t.datetime "updated_at"
     t.string   "encrypted_password"
     t.string   "salt"
+    t.string   "remember_token"
   end
+
+  add_index "users", ["remember_token"], :name => "index_users_on_remember_token"
 
 end
