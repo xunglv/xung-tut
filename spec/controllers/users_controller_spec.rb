@@ -99,6 +99,14 @@ describe UsersController do
       response.should have_tag("h2>img", :class => "gravatar")
     end
 
+    it "should show the user's microposts" do
+      mp1 = Factory(:micropost, :user => @user, :content => "Foo bar")
+      mp2 = Factory(:micropost, :user => @user, :content => "Baz quux")
+      get :show, :id => @user
+      response.should have_tag("span.content", mp1.content)
+      response.should have_tag("span.content", mp2.content)
+    end
+
   end
 
 
@@ -244,7 +252,7 @@ describe UsersController do
     describe "as an admin user" do
 
       before(:each) do
-        admin = Factory(:user, :email => "admin@example.com", :admin => true)
+        admin = Factory(:user, :email => "admin@gmail.com", :admin => true)
         test_sign_in(admin)
         User.should_receive(:find).with(@user).and_return(@user)
         @user.should_receive(:destroy).and_return(@user)

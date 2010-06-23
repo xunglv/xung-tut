@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20100603145347
+# Schema version: 20100618160949
 #
 # Table name: users
 #
@@ -11,12 +11,16 @@
 #  encrypted_password :string(255)
 #  salt               :string(255)
 #  remember_token     :string(255)
+#  admin              :boolean
 #
 
 
 class User < ActiveRecord::Base
   attr_accessor :password
   attr_accessible :name, :email, :password, :password_confirmation, :testfield
+
+  has_many :microposts, :dependent => :destroy
+
   validates_presence_of :name, :email, :password, :password_confirmation
   validates_length_of :name, :maximum => 50
 
@@ -24,7 +28,7 @@ class User < ActiveRecord::Base
 
   validates_format_of :email, :with=>EmailRegex
   validates_uniqueness_of :email, :case_sensitive => false
-  validates_uniqueness_of :name, :case_sensitive => false
+ #validates_uniqueness_of :name, :case_sensitive => false
 
   validates_confirmation_of :password
   validates_length_of :password, :within => 6..40
@@ -43,6 +47,11 @@ class User < ActiveRecord::Base
     user=User.find_by_email(email)
     return nil if user.nil?
     return user if user.has_password?(submitted_password)
+  end
+
+  def feed
+    # This is preliminary. See Chapter 12 for the full implementation.
+    Micropost.all(:conditions => ["user_id = ?", id])
   end
 
   before_save :encrypt_password
