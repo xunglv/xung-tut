@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe PagesController do
+  integrate_views
 
   #Delete these examples and add some real ones
   it "should use PagesController" do
@@ -13,6 +14,7 @@ describe PagesController do
     describe "when not signed in" do
 
       before(:each) do
+        @base_title = "Rails tuts"
         get :home
       end
 
@@ -21,7 +23,7 @@ describe PagesController do
       end
 
       it "should have the right title" do
-        response.should have_tag("title", "#{@base_title} | Home")
+       response.should have_tag("title", "#{@base_title} | Home")
       end
     end
 
@@ -39,6 +41,8 @@ describe PagesController do
                                               /0 following/)
         response.should have_tag("a[href=?]", followers_user_path(@user),
                                               /1 follower/)
+        response.should have_tag('div')
+
       end
     end
   end

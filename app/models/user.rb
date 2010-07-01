@@ -42,7 +42,7 @@ class User < ActiveRecord::Base
   validates_confirmation_of :password
   validates_length_of :password, :within => 6..40
 
-
+  
   def has_password?(submitted_password)
     self.encrypted_password == encrypt(submitted_password)
   end
@@ -74,6 +74,11 @@ class User < ActiveRecord::Base
   def unfollow!(followed)
     relationships.find_by_followed_id(followed).destroy
   end
+
+  def feed
+    Micropost.from_users_followed_by(self)
+  end
+
 
   before_save :encrypt_password
 

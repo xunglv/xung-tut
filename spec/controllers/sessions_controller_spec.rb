@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe SessionsController do
 
+  integrate_views
+
   #Delete these examples and add some real ones
   it "should use SessionsController" do
     controller.should be_an_instance_of(SessionsController)
@@ -17,7 +19,6 @@ describe SessionsController do
     it "should have the right title" do
       get :new
       response.should have_tag("title", /Sign in/i)
-      puts "hello xxx"
     end
   end
 
