@@ -30,7 +30,12 @@ class User < ActiveRecord::Base
   has_many :followers, :through => :reverse_relationships, :source => :follower
 
 
-  validates_presence_of :name, :email, :password, :password_confirmation
+  validates :name, :presence => true
+  validates :email, :presence => true
+  validates :password, :presence => true
+  validates :password_confirmation, :presence => true
+
+
   validates_length_of :name, :maximum => 50
 
   EmailRegex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i

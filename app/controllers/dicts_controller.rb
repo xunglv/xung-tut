@@ -1,0 +1,2 @@
+class DictsController < ApplicationController
+end

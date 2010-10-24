@@ -36,6 +36,11 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @microposts = @user.microposts.paginate(:page => params[:page])
     @title = CGI.escapeHTML(@user.name)
+
+    respond_to do |format|
+        format.html
+        format.xml { render :xml => @user.to_xml }
+    end
   end
 
   def index
