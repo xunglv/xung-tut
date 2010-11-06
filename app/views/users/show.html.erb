@@ -1,10 +1,10 @@
 <table class="profile">
   <tr>
     <td class="main">
-      <h2>
+      <h1>
         <%= gravatar_for @user %>
-        <%= h @user.name %>
-      </h2>
+        <%= @user.name %>
+      </h1>
       <%= render 'follow_form' if signed_in? %>
       <% unless @user.microposts.empty? %>
         <table class="microposts">

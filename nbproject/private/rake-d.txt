@@ -48,7 +48,6 @@ doc\:clobber_rails=
 doc\:guides=
 doc\:plugins=
 doc\:plugins\:faker-0.3.1=
-doc\:plugins\:gravatar=
 doc\:plugins\:rails_upgrade=
 doc\:rails=
 doc\:reapp=
