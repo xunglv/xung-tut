@@ -1,4 +1,6 @@
 RailsGnux::Application.routes.draw do
+  resources :words
+
   resources :users do
 
     member do
