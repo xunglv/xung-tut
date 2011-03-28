@@ -1,0 +1,61 @@
+<script type = "text/javascript">
+var xmlhttp;
+xmlhttp=new XMLHttpRequest();
+  
+xmlhttp.onreadystatechange=function()
+{
+ 	if (xmlhttp.readyState==4 )
+    {
+    	if (xmlhttp.status==200) {
+    		//alert(xmlhttp.responseText);
+    		div_meaning = document.getElementById('id_meaning');
+    		//alert(div_meaning);
+    		div_meaning.innerHTML = xmlhttp.responseText;
+    		
+    	}
+    	else{
+    		
+    		alert("request failed: " + xmlhttp.responseText);
+    	}
+    }
+    
+}
+
+function onkeyPress(e) {
+	//alert(e);
+	if (e.keyCode==13) //enter
+	{
+		lookupRequest();
+	}
+}
+  
+  
+  
+function lookupRequest() {
+  	  var word = document.getElementById('id_textbox_word').value;
+  	  //var url = 'http://1tudien.com/engine/?title=test&d=1,2,3,4,5,6,7,8,9&pt=f';
+  	  var url = '/dictionary/lookup?word='+word;
+  	  //alert(url);
+  	  
+  	  xmlhttp.open("GET",url,true);
+  	  xmlhttp.send()
+}
+  
+</script>
+
+<h1>dictionary</h1>
+
+ <div>
+ 	<input id="id_textbox_word" type = 'text' onkeypress='onkeyPress(event)'> </input>
+ 	<input type = 'button' onclick='lookupRequest()'  value='submit'> </input>
+ 	
+ 	<div id="id_meaning">
+ 	</div>
+ 	
+ </div>
+ 
+
+
+
+
+
