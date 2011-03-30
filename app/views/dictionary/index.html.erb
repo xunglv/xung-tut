@@ -43,7 +43,8 @@ xmlhttpLatestWords.onreadystatechange=function()
     		
     		for (var i=0; i<list.length; i++) {
     			var li = document.createElement('li');
-    			li.innerText = list[i].word.word;
+    			//alert(list[i].word.word);
+    			li.appendChild(document.createTextNode(list[i].word.word));
     			ul.appendChild(li);
     		}
     		
