@@ -7,7 +7,7 @@
       <%= render 'layouts/stylesheets' %>
       <%= javascript_include_tag :defaults %>
   </head>
-  <body onload="document_onload()">
+  <body>
     <div class="container">
       <%=render 'layouts/header'%>
       <div id="content" class="round">

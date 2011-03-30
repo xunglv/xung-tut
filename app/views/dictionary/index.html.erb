@@ -1,58 +1,121 @@
 <script type = "text/javascript">
-var xmlhttp;
-xmlhttp=new XMLHttpRequest();
+
+
+
+function dictionary_pageload() {
+	requestLatestWords();
+}
+
+
+var xmlhttpLookup=new XMLHttpRequest();
+var xmlhttpLatestWords = new XMLHttpRequest();
   
-xmlhttp.onreadystatechange=function()
+xmlhttpLookup.onreadystatechange=function()
 {
- 	if (xmlhttp.readyState==4 )
+ 	if (xmlhttpLookup.readyState==4 )
     {
-    	if (xmlhttp.status==200) {
-    		//alert(xmlhttp.responseText);
+    	if (xmlhttpLookup.status==200) {
     		div_meaning = document.getElementById('id_meaning');
-    		//alert(div_meaning);
-    		div_meaning.innerHTML = xmlhttp.responseText;
+    		div_meaning.innerHTML = xmlhttpLookup.responseText;
+    		
+    		requestLatestWords();
+    	}
+    	else{
+    		alert("request failed: " + xmlhttpLookup.responseText);
+    	}
+    }
+    
+}
+
+xmlhttpLatestWords.onreadystatechange=function()
+{
+ 	if (xmlhttpLatestWords.readyState==4 )
+    {
+    	if (xmlhttpLatestWords.status==200) {
+    		var list = eval('(' + xmlhttpLatestWords.responseText + ')');
+    		var ul = document.getElementById('id_ul_latest_words');
+    		
+    		//remove children
+    		while (ul.hasChildNodes()) {
+    			ul.removeChild(ul.lastChild);
+    		}
+    		
+    		
+    		for (var i=0; i<list.length; i++) {
+    			var li = document.createElement('li');
+    			li.innerText = list[i].word.word;
+    			ul.appendChild(li);
+    		}
     		
     	}
     	else{
-    		
-    		alert("request failed: " + xmlhttp.responseText);
+    		alert("request failed: " + xmlhttpLatestWords.responseText);
     	}
     }
     
 }
 
 function onkeyPress(e) {
-	//alert(e);
 	if (e.keyCode==13) //enter
 	{
-		lookupRequest();
+		requestLookup();
 	}
 }
   
   
   
-function lookupRequest() {
+function requestLookup() {
   	  var word = document.getElementById('id_textbox_word').value;
-  	  //var url = 'http://1tudien.com/engine/?title=test&d=1,2,3,4,5,6,7,8,9&pt=f';
   	  var url = '/dictionary/lookup?word='+word;
-  	  //alert(url);
-  	  
-  	  xmlhttp.open("GET",url,true);
-  	  xmlhttp.send()
+  	  xmlhttpLookup.open("GET",url,true);
+  	  xmlhttpLookup.send()
 }
-  
+
+function requestLatestWords() {
+	var num = 20;
+	var url = "/dictionary/latest_words.json?num="+num;
+	xmlhttpLatestWords.open("GET",url,true);
+	xmlhttpLatestWords.send();
+}
+
+
 </script>
+
+<style type='text/css'>
+#id_left_column {
+	float:left;
+	width: 400px;
+
+}
+#id_div_latest_words {
+	float:right;
+	width:200px;
+	
+}
+
+#id_ul_latest_words {
+	overflow:true;
+}
+</style>
 
 <h1>dictionary</h1>
 
- <div>
+ 
+ <div id='id_left_column'>
  	<input id="id_textbox_word" type = 'text' onkeypress='onkeyPress(event)'> </input>
- 	<input type = 'button' onclick='lookupRequest()'  value='submit'> </input>
+ 	<input type = 'button' onclick='requestLookup()'  value='submit'> </input>
  	
  	<div id="id_meaning">
  	</div>
- 	
  </div>
+ 	
+ <div id = "id_div_latest_words">
+ 	latest words:
+ 	<ul id="id_ul_latest_words">
+ 	</ul>
+ </div>
+ 	
+ 
  
 
 

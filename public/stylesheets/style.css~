@@ -16,7 +16,7 @@ body h1 {
 
 body h2 {
 	padding: 10px 20px;
-	background-color:gray;
+	background-color:lightgray;
 }
 
 p {

@@ -4,8 +4,11 @@ class DictionaryController < ApplicationController
 		
 	end
 	
-	def sofarwords
-		words = Word.find( :all, :conditions=>["created_at <= (?) and created_at >=(?)", Time.now, Time.now - 1.day])
+	def latest_words
+		num = params[:num]
+		puts "num words: #{num}"
+		#:conditions=>["created_at <= (?) and created_at >=(?)", Time.now, Time.now - 1.day]
+		words = Word.find( :all, :order => "updated_at desc", :limit=>num )
 		puts "word #{words} len: #{words.length}"
 		respond_to do |format|
 			format.json {render :text => words.to_json, :layout => false}
@@ -14,11 +17,11 @@ class DictionaryController < ApplicationController
 	
 	def lookup
 		keyword = params[:word]
-		puts "in lookup action #{keyword}"
+		#puts "in lookup action #{keyword}"
 		
 		
 		url_str = "http://1tudien.com/engine/?title=#{keyword}&d=1,2,3,4,5,6,7,8,9&pt=f"
-		res = Net::HTTP.get_response(URI.parse(url_str))
+		res = Net::HTTP.get_response(URI.parse(URI.encode(url_str)))
 		
 		#puts "=============contents: #{req.body}"
 		#respond_to do |format|
@@ -37,12 +40,15 @@ class DictionaryController < ApplicationController
 		@word = Word.find_by_word(keyword);
 		
 		if @word.nil? then
-			puts  "new word"
+			#puts  "new word"
 			@word = Word.new
-			@word.word = keyword
-			@word.save
-			puts "word saved"
+			#puts "word saved"
 		end
+		
+		@word.updated_at  = Time.now
+		@word.word = keyword
+		@word.save
+		
 		
 	end
 end
