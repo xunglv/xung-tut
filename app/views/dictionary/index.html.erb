@@ -73,7 +73,7 @@ function requestLookup() {
 }
 
 function requestLatestWords() {
-	var num = 20;
+	var num = 50;
 	var url = "/dictionary/latest_words.json?num="+num;
 	xmlhttpLatestWords.open("GET",url,true);
 	xmlhttpLatestWords.send();
