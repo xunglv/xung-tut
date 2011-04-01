@@ -1,86 +1,3 @@
-<script type = "text/javascript">
-
-
-
-function dictionary_pageload() {
-	requestLatestWords();
-}
-
-
-var xmlhttpLookup=new XMLHttpRequest();
-var xmlhttpLatestWords = new XMLHttpRequest();
-  
-xmlhttpLookup.onreadystatechange=function()
-{
- 	if (xmlhttpLookup.readyState==4 )
-    {
-    	if (xmlhttpLookup.status==200) {
-    		div_meaning = document.getElementById('id_meaning');
-    		div_meaning.innerHTML = xmlhttpLookup.responseText;
-    		
-    		requestLatestWords();
-    	}
-    	else{
-    		alert("request failed: " + xmlhttpLookup.responseText);
-    	}
-    }
-    
-}
-
-xmlhttpLatestWords.onreadystatechange=function()
-{
- 	if (xmlhttpLatestWords.readyState==4 )
-    {
-    	if (xmlhttpLatestWords.status==200) {
-    		var list = eval('(' + xmlhttpLatestWords.responseText + ')');
-    		var ul = document.getElementById('id_ul_latest_words');
-    		
-    		//remove children
-    		while (ul.hasChildNodes()) {
-    			ul.removeChild(ul.lastChild);
-    		}
-    		
-    		
-    		for (var i=0; i<list.length; i++) {
-    			var li = document.createElement('li');
-    			//alert(list[i].word.word);
-    			li.appendChild(document.createTextNode(list[i].word.word));
-    			ul.appendChild(li);
-    		}
-    		
-    	}
-    	else{
-    		alert("request failed: " + xmlhttpLatestWords.responseText);
-    	}
-    }
-    
-}
-
-function onkeyPress(e) {
-	if (e.keyCode==13) //enter
-	{
-		requestLookup();
-	}
-}
-  
-  
-  
-function requestLookup() {
-  	  var word = document.getElementById('id_textbox_word').value;
-  	  var url = '/dictionary/lookup?word='+word;
-  	  xmlhttpLookup.open("GET",url,true);
-  	  xmlhttpLookup.send()
-}
-
-function requestLatestWords() {
-	var num = 50;
-	var url = "/dictionary/latest_words.json?num="+num;
-	xmlhttpLatestWords.open("GET",url,true);
-	xmlhttpLatestWords.send();
-}
-
-
-</script>
 
 <style type='text/css'>
 #id_left_column {
@@ -99,19 +16,18 @@ function requestLatestWords() {
 }
 </style>
 
-<h1>dictionary</h1>
-
+<div id="id_message">It works</div>
  
  <div id='id_left_column'>
  	<input id="id_textbox_word" type = 'text' onkeypress='onkeyPress(event)'> </input>
- 	<input type = 'button' onclick='requestLookup()'  value='submit'> </input>
+ 	<input id="id_button_submit"type = 'button' value='submit'> </input>
+ 	
  	
  	<div id="id_meaning">
  	</div>
  </div>
  	
  <div id = "id_div_latest_words">
- 	latest words:
  	<ul id="id_ul_latest_words">
  	</ul>
  </div>
@@ -119,6 +35,140 @@ function requestLatestWords() {
  
  
 
+<script type = "text/javascript">
+
+
+ //var word = document.getElementById('id_textbox_word').value;
+  //	  var url = '/dictionary/lookup?word='+word;
+//mootools
+
+function requestLookingUp(event) {
+    //prevent the page from changing
+    var word = document.getElementById('id_textbox_word').value;
+  	var url = '/dictionary/lookup?word='+word;
+ 
+    //make the ajax call
+    var req = new Request({
+      method: 'get',
+      url: url,
+      data: { },
+      onRequest: function() {
+      	  $('id_message').innerHTML = "Requesting..."
+      },
+      
+      onComplete: function(response) {
+      	  div_meaning = document.getElementById('id_meaning');
+    	  div_meaning.innerHTML = response;
+    	  $('id_message').innerHTML = "It works"
+    	  
+    	  requestLatestWords(null);
+    	  
+      },
+      onFailure: function(){
+         $('id_message').innerHTML = "Connection error"
+      }
+    }).send();
+}
+
+
+$('id_button_submit').addEvent('click', requestLookingUp);
+
+
+
+function requestLatestWords(event) {
+    //prevent the page from changing
+    var num = 50;
+	var url = "/dictionary/latest_words.json?num="+num;
+ 
+    //make the ajax call
+    var req = new Request({
+      method: 'get',
+      url: url,
+      data: { },
+      onRequest: function() {
+      	  //$('id_message').innerHTML = "Requesting..."
+      },
+      
+      onComplete: function(response) {
+    	  
+    	  var list = eval('(' + response + ')');
+    		var ul = document.getElementById('id_ul_latest_words');
+    		
+    		//remove children
+    		while (ul.hasChildNodes()) {
+    			ul.removeChild(ul.lastChild);
+    		}
+    		
+    		
+    		for (var i=0; i<list.length; i++) {
+    			var li = document.createElement('li');
+    			//alert(list[i].word.word);
+    			li.appendChild(document.createTextNode(list[i].word.word));
+    			ul.appendChild(li);
+    		} 
+    		
+      },
+      onFailure: function(){
+         $('id_message').innerHTML = "Connection error"
+      }
+    }).send();
+}
+//end mootools
+
+
+
+
+
+function dictionary_pageload() {
+	requestLatestWords();
+}
+
+
+
+var xmlhttpLatestWords = new XMLHttpRequest();
+
+
+
+function onkeyPress(e) {
+	if (e.keyCode==13) //enter
+	{
+		requestLookingUp(null);
+	}
+}
+
+
+var xmlhttpLookup=new XMLHttpRequest();
+xmlhttpLookup.onreadystatechange=function()
+{
+ 	if (xmlhttpLookup.readyState==4 )
+    {
+    	if (xmlhttpLookup.status==200) {
+    		div_meaning = document.getElementById('id_meaning');
+    		div_meaning.innerHTML = xmlhttpLookup.responseText;
+    		
+    		requestLatestWords();
+    	}
+    	else{
+    		alert("request failed: " + xmlhttpLookup.responseText);
+    	}
+    }
+    
+}
+
+  
+  
+  
+function requestLookup() {
+  	  var word = document.getElementById('id_textbox_word').value;
+  	  var url = '/dictionary/lookup?word='+word;
+  	  xmlhttpLookup.open("GET",url,true);
+  	  xmlhttpLookup.send()
+}
+
+
+
+
+</script>
 
 
 
