@@ -2,7 +2,7 @@
 <style type='text/css'>
 #id_left_column {
 	float:left;
-	width: 400px;
+	width: 350px;
 
 }
 #id_div_latest_words {
@@ -14,6 +14,20 @@
 #id_ul_latest_words {
 	overflow:true;
 }
+
+li{
+	list-style-type:none;
+}
+
+.hidden {
+	display:none;
+}
+
+.visible {
+	display:inline;
+}
+
+
 </style>
 
 <div id="id_message">It works</div>
@@ -36,10 +50,6 @@
  
 
 <script type = "text/javascript">
-
-
- //var word = document.getElementById('id_textbox_word').value;
-  //	  var url = '/dictionary/lookup?word='+word;
 //mootools
 
 function requestLookingUp(event) {
@@ -60,9 +70,7 @@ function requestLookingUp(event) {
       	  div_meaning = document.getElementById('id_meaning');
     	  div_meaning.innerHTML = response;
     	  $('id_message').innerHTML = "It works"
-    	  
     	  requestLatestWords(null);
-    	  
       },
       onFailure: function(){
          $('id_message').innerHTML = "Connection error"
@@ -73,6 +81,15 @@ function requestLookingUp(event) {
 
 $('id_button_submit').addEvent('click', requestLookingUp);
 
+
+function word_onMouseOver() {
+	//alert("mouseover" + this.deleteIconEle.src);
+	this.deleteIconEle.setAttribute("class",null);
+}
+
+function word_onMouseOut(){
+	this.deleteIconEle.setAttribute("class","hidden");
+}
 
 
 function requestLatestWords(event) {
@@ -86,7 +103,7 @@ function requestLatestWords(event) {
       url: url,
       data: { },
       onRequest: function() {
-      	  //$('id_message').innerHTML = "Requesting..."
+
       },
       
       onComplete: function(response) {
@@ -102,11 +119,24 @@ function requestLatestWords(event) {
     		
     		for (var i=0; i<list.length; i++) {
     			var li = document.createElement('li');
-    			//alert(list[i].word.word);
+    			var img = document.createElement("img");
+    			
+    			img.setAttribute("src", "/images/delete.png")
+    			img.setAttribute("width",16);
+    			img.setAttribute("height",16);
+    			img.setAttribute("class", "hidden");
+    			
+    			
+    			
     			li.appendChild(document.createTextNode(list[i].word.word));
+    			li.appendChild(img);
+    			li.deleteIconEle = img;
     			ul.appendChild(li);
+    			
+    			
+    			li.addEventListener("mouseout",word_onMouseOut,false);
+    			li.addEventListener("mouseover", word_onMouseOver, false);
     		} 
-    		
       },
       onFailure: function(){
          $('id_message').innerHTML = "Connection error"
@@ -124,11 +154,6 @@ function dictionary_pageload() {
 }
 
 
-
-var xmlhttpLatestWords = new XMLHttpRequest();
-
-
-
 function onkeyPress(e) {
 	if (e.keyCode==13) //enter
 	{
@@ -136,34 +161,6 @@ function onkeyPress(e) {
 	}
 }
 
-
-var xmlhttpLookup=new XMLHttpRequest();
-xmlhttpLookup.onreadystatechange=function()
-{
- 	if (xmlhttpLookup.readyState==4 )
-    {
-    	if (xmlhttpLookup.status==200) {
-    		div_meaning = document.getElementById('id_meaning');
-    		div_meaning.innerHTML = xmlhttpLookup.responseText;
-    		
-    		requestLatestWords();
-    	}
-    	else{
-    		alert("request failed: " + xmlhttpLookup.responseText);
-    	}
-    }
-    
-}
-
-  
-  
-  
-function requestLookup() {
-  	  var word = document.getElementById('id_textbox_word').value;
-  	  var url = '/dictionary/lookup?word='+word;
-  	  xmlhttpLookup.open("GET",url,true);
-  	  xmlhttpLookup.send()
-}
 
 
 
