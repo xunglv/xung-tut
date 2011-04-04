@@ -50,6 +50,20 @@ li{
  
 
 <script type = "text/javascript">
+
+
+function dictionary_pageload() {
+	requestLatestWords();
+}
+
+function onkeyPress(e) {
+	if (e.keyCode==13) //enter
+	{
+		requestLookingUp(null);
+	}
+}
+
+
 //mootools
 
 function requestLookingUp(event) {
@@ -92,6 +106,37 @@ function word_onMouseOut(){
 }
 
 
+function word_onDeleteRequest() {
+	r = confirm("Are you sure");
+	
+	if (r==false)
+		return;
+	
+	//make the ajax call
+	var url = '/words/' + this.word.id;
+    var req = new Request({
+      method: 'DELETE',
+      url: url,
+      data: {},
+      onRequest: function() {
+      	  $('id_message').innerHTML = "Requesting..."
+      },
+      
+      onComplete: function(response) {
+      	 // div_meaning = document.getElementById('id_meaning');
+    	 // div_meaning.innerHTML = response;
+    	  $('id_message').innerHTML = "It works"
+    	  requestLatestWords(null);
+    	 
+      },
+      onFailure: function(){
+         $('id_message').innerHTML = "Connection error"
+      }
+    }).send();
+}
+
+
+
 function requestLatestWords(event) {
     //prevent the page from changing
     var num = 50;
@@ -125,6 +170,9 @@ function requestLatestWords(event) {
     			img.setAttribute("width",16);
     			img.setAttribute("height",16);
     			img.setAttribute("class", "hidden");
+    			img.word = list[i].word;
+    			
+    			img.addEventListener("click", word_onDeleteRequest, false);
     			
     			
     			
@@ -134,7 +182,7 @@ function requestLatestWords(event) {
     			ul.appendChild(li);
     			
     			
-    			li.addEventListener("mouseout",word_onMouseOut,false);
+    			li.addEventListener("mouseout",  word_onMouseOut,false);
     			li.addEventListener("mouseover", word_onMouseOver, false);
     		} 
       },
@@ -144,24 +192,6 @@ function requestLatestWords(event) {
     }).send();
 }
 //end mootools
-
-
-
-
-
-function dictionary_pageload() {
-	requestLatestWords();
-}
-
-
-function onkeyPress(e) {
-	if (e.keyCode==13) //enter
-	{
-		requestLookingUp(null);
-	}
-}
-
-
 
 
 

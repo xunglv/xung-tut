@@ -71,6 +71,7 @@ class WordsController < ApplicationController
   # DELETE /words/1
   # DELETE /words/1.xml
   def destroy
+  	  puts "=====================deleting a word"
     @word = Word.find(params[:id])
     @word.destroy
 

@@ -25,7 +25,6 @@ class WordsController < ApplicationController
   # GET /words/new.xml
   def new
     @word = Word.new
-
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @word }
