@@ -61,13 +61,17 @@ class WordsController < ApplicationController
       if @word.update_attributes(params[:word])
         format.html { redirect_to(@word, :notice => 'Word was successfully updated.') }
         format.xml  { head :ok }
+        format.json { head :ok}
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @word.errors, :status => :unprocessable_entity }
+        format.json { head :ok}
       end
     end
   end
-
+  
+  
+  
   # DELETE /words/1
   # DELETE /words/1.xml
   def destroy

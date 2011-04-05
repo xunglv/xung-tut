@@ -67,10 +67,19 @@ class WordsController < ApplicationController
       end
     end
   end
-
+  
+  def update_note
+  	  @word = Word.find(params[:id]);
+  	  if @word
+  	  	  @word.note = params[:note];
+  	  	  @word.save
+  	  end
+  end
+  
   # DELETE /words/1
   # DELETE /words/1.xml
   def destroy
+  	  puts "=====================deleting a word"
     @word = Word.find(params[:id])
     @word.destroy
 
