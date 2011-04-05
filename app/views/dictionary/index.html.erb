@@ -119,6 +119,10 @@ function word_onMouseOut(){
 	this.deleteIconEle.setAttribute("class","hidden");
 }
 
+function word_onClickRequest() {
+	$("id_textbox_word").value = this.word.note;
+}
+
 
 function word_updateWordRequest(word) {
 	//make the ajax call
@@ -224,7 +228,7 @@ function requestLatestWords(event) {
     			
     			li.addEventListener("mouseout",  word_onMouseOut,false);
     			li.addEventListener("mouseover", word_onMouseOver, false);
-    			//li.addEventListener("click", word_onEditRequest, false);
+    			li.addEventListener("click", word_onClickRequest, false);
     		} 
       },
       onFailure: function(){
