@@ -7,12 +7,9 @@
 }
 #id_div_latest_words {
 	float:right;
-	
+	width: 300;
 }
 
-#id_ul_latest_words {
-	overflow:true;
-}
 
 li{
 	list-style-type:none;
@@ -216,12 +213,12 @@ function requestLatestWords(event) {
     			
     			var input = document.createElement("input");
     			input.setAttribute("type", "text");
-    			input.setAttribute("placeholder", "note here");
+    			input.setAttribute("placeholder", "...");
     			if (li.word.note) {
     				input.setAttribute("value", li.word.note);
     			}
-    			input.addEventListener("keypress", note_onKeyPress);
     			input.word = list[i].word;
+    			input.addEventListener("keypress", note_onKeyPress, false);
     			li.appendChild(input);
     			
     			
