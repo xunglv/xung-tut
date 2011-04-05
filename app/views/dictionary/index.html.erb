@@ -104,7 +104,8 @@ $('id_button_submit').addEvent('click', requestLookingUp);
 
 function note_onKeyPress(e) {
 	if (e.keyCode==13) {
-		$("id_textbox_word").focus();
+		//$("id_textbox_word").focus();
+		this.blur();
 			this.word.note = this.value;
 			word_updateWordRequest(this.word);
 	}
@@ -120,7 +121,7 @@ function word_onMouseOut(){
 }
 
 function word_onClickRequest() {
-	$("id_textbox_word").value = this.word.note;
+	$("id_textbox_word").value =  this.word.word;
 }
 
 
