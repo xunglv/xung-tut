@@ -13,11 +13,12 @@
     </tr>
   </table>
 <% else %>
-  <h1>Xung Le</h1>
+  <h1>Sample App</h1>
 
   <p>
-    Professtional mobile & web developer
+    This is the home page for the
+    
   </p>
 
-  <%#= link_to "Sign up now!", signup_path, :class => "signup_button round" %>
+  <%= link_to "Sign up now!", signup_path, :class => "signup_button round" %>
 <% end %>

@@ -1,0 +1,2 @@
+module ShapdetectorHelper
+end
