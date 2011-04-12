@@ -1,31 +1,44 @@
 
 <style type='text/css'>
 #id_left_column {
-	float:left;
-	width: 400px;
+	width: 450px;
+	float:left
 
 }
 #id_div_latest_words {
 	float:right;
-	width:200px;
-	
 }
 
-#id_ul_latest_words {
-	overflow:true;
+
+li{
+	list-style-type:none;
 }
+
+
+.hidden {
+	visibility:hidden;
+}
+
+
+
+li input {
+	border:none;
+}
+
+
+
 </style>
 
-<div id="id_message">It works</div>
+
+<div id="id_message">I'm working</div>
  
  <div id='id_left_column'>
- 	<input id="id_textbox_word" type = 'text' onkeypress='onkeyPress(event)'> </input>
+ 	<input id="id_textbox_word" type = 'text' onkeypress='onkeyPress(event)' > </input>
  	<input id="id_button_submit"type = 'button' value='submit'> </input>
- 	
  	
  	<div id="id_meaning">
  	</div>
- </div>
+ </div>                                                                                              
  	
  <div id = "id_div_latest_words">
  	<ul id="id_ul_latest_words">
@@ -37,11 +50,24 @@
 
 <script type = "text/javascript">
 
+var workMsg = "I'm working";
+var selectedWordId = null;
 
- //var word = document.getElementById('id_textbox_word').value;
-  //	  var url = '/dictionary/lookup?word='+word;
+
+
+function dictionary_pageload() {
+	requestLatestWords();
+}
+
+function onkeyPress(e) {
+	if (e.keyCode==13) //enter
+	{
+		requestLookingUp(null);
+	}
+}
+
+
 //mootools
-
 function requestLookingUp(event) {
     //prevent the page from changing
     var word = document.getElementById('id_textbox_word').value;
@@ -59,10 +85,8 @@ function requestLookingUp(event) {
       onComplete: function(response) {
       	  div_meaning = document.getElementById('id_meaning');
     	  div_meaning.innerHTML = response;
-    	  $('id_message').innerHTML = "It works"
-    	  
+    	  $('id_message').innerHTML = workMsg;
     	  requestLatestWords(null);
-    	  
       },
       onFailure: function(){
          $('id_message').innerHTML = "Connection error"
@@ -70,10 +94,75 @@ function requestLookingUp(event) {
     }).send();
 }
 
-
 $('id_button_submit').addEvent('click', requestLookingUp);
 
+function note_onKeyPress(e) {
+	if (e.keyCode==13) {
+		//$("id_textbox_word").focus();
+		this.blur();
+			this.word.note = this.value;
+			word_updateWordRequest(this.word);
+	}
+}
 
+
+function word_onMouseOver() {
+	this.deleteIconEle.setAttribute("class",null);
+}
+
+function word_onMouseOut(){
+	this.deleteIconEle.setAttribute("class","hidden");
+}
+
+function word_onClickRequest() {
+	$("id_textbox_word").value =  this.word.word;
+}
+
+
+function word_updateWordRequest(word) {
+	//make the ajax call
+	var url = '/words/' + word.id + ".json";
+    var req = new Request({
+      method: 'PUT',
+      url: url,
+      data:{word: {note:word.note}},
+      onRequest: function() {
+      	  $('id_message').innerHTML = "Requesting..."
+      },
+      onComplete: function(response) {
+    	  $('id_message').innerHTML = workMsg;
+      },
+      onFailure: function(){
+         $('id_message').innerHTML = "Connection error"
+      }
+    }).send();
+}
+
+function word_onDeleteRequest() {
+	r = confirm("Are you sure to delete?");
+	
+	if (r==false)
+		return;
+	
+	//make the ajax call
+	var url = '/words/' + this.word.id;
+    var req = new Request({
+      method: 'DELETE',
+      url: url,
+      data: {},
+      onRequest: function() {
+      	  $('id_message').innerHTML = "Requesting..."
+      },
+      
+      onComplete: function(response) {
+    	  $('id_message').innerHTML = workMsg;
+    	  requestLatestWords(null);
+      },
+      onFailure: function(){
+         $('id_message').innerHTML = "Connection error"
+      }
+    }).send();
+}
 
 function requestLatestWords(event) {
     //prevent the page from changing
@@ -86,12 +175,12 @@ function requestLatestWords(event) {
       url: url,
       data: { },
       onRequest: function() {
-      	  //$('id_message').innerHTML = "Requesting..."
+
       },
       
       onComplete: function(response) {
     	  
-    	  var list = eval('(' + response + ')');
+    	    var list = eval('(' + response + ')');
     		var ul = document.getElementById('id_ul_latest_words');
     		
     		//remove children
@@ -102,11 +191,40 @@ function requestLatestWords(event) {
     		
     		for (var i=0; i<list.length; i++) {
     			var li = document.createElement('li');
-    			//alert(list[i].word.word);
+    			li.word = list[i].word;
+    			
+    			//img
+    			var img = document.createElement("img");
+    			img.setAttribute("src", "/images/delete.png")
+    			img.setAttribute("width",16);
+    			img.setAttribute("height",16);
+    			img.setAttribute("class", "hidden");
+    			img.word = list[i].word;
+    			img.addEventListener("click", word_onDeleteRequest, false);
+    			li.appendChild(img);
+    			li.deleteIconEle = img;
+    			
+    			
     			li.appendChild(document.createTextNode(list[i].word.word));
+    			li.appendChild(document.createTextNode(' | '));
+    			
+    			var input = document.createElement("input");
+    			input.setAttribute("type", "text");
+    			input.setAttribute("placeholder", "...");
+    			if (li.word.note) {
+    				input.setAttribute("value", li.word.note);
+    			}
+    			input.word = list[i].word;
+    			input.addEventListener("keypress", note_onKeyPress, false);
+    			li.appendChild(input);
+    			
+    			
     			ul.appendChild(li);
+    			
+    			li.addEventListener("mouseout",  word_onMouseOut,false);
+    			li.addEventListener("mouseover", word_onMouseOver, false);
+    			li.addEventListener("click", word_onClickRequest, false);
     		} 
-    		
       },
       onFailure: function(){
          $('id_message').innerHTML = "Connection error"
@@ -114,24 +232,6 @@ function requestLatestWords(event) {
     }).send();
 }
 //end mootools
-
-
-
-
-
-function dictionary_pageload() {
-	requestLatestWords();
-}
-
-
-function onkeyPress(e) {
-	if (e.keyCode==13) //enter
-	{
-		requestLookingUp(null);
-	}
-}
-
-
 
 
 

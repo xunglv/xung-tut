@@ -1,4 +1,5 @@
 require 'net/http'
+require 'wordnik-ruby'
 class DictionaryController < ApplicationController
 	def index
 		
@@ -15,11 +16,31 @@ class DictionaryController < ApplicationController
 		end
 	end
 	
-	def lookup
+	
+	def wiki
+		require 'media_wiki'
+		mw = MediaWiki::Gateway.new('http://en.wiktionary.org/w/api.php')
+		mw.login('xunglv', 'advance')
+		
+		respond_to do |format|
+			format.html {render :text => mw.render(params[:id], :noeditsections=>true, :linkbase => '/dictionary',
+				:noimages=>true), :layout => false}
+		end
+	end
+	
+	
+	def wordnik
+		wordnik=Wordnik::Wordnik.new({:api_key=>'f16cc66a177a055f7c0090af4710f7125513a8c433f02174b', 
+		:username=>'xunglv', :password=>'advance'})
+		word = Wordnik::Word.find(params[:word])
+		respond_to do |format|
+			format.json {render :text => word.definitions.to_json, :layout => false}
+		end
+	end
+	
+	def mottudien
 		keyword = params[:word]
 		#puts "in lookup action #{keyword}"
-		
-		
 		url_str = "http://1tudien.com/engine/?title=#{keyword}&d=1,2,3,4,5,6,7,8,9&pt=f"
 		res = Net::HTTP.get_response(URI.parse(URI.encode(url_str)))
 		
@@ -40,9 +61,38 @@ class DictionaryController < ApplicationController
 		@word = Word.find_by_word(keyword);
 		
 		if @word.nil? then
-			#puts  "new word"
 			@word = Word.new
-			#puts "word saved"
+		end
+		
+		@word.updated_at  = Time.now
+		@word.word = keyword
+		@word.save
+	end
+	
+	def lookup
+		keyword = params[:word]
+		#puts "in lookup action #{keyword}"
+		url_str = "http://1tudien.com/engine/?title=#{keyword}&d=1,2,3,4,5,6,7,8,9&pt=f"
+		res = Net::HTTP.get_response(URI.parse(URI.encode(url_str)))
+		
+		#puts "=============contents: #{req.body}"
+		#respond_to do |format|
+		#	format.json {render :text => "teststets".to_json, :layout => false}
+		#end
+		
+		#if res.body.index("Không tìm thấy kết quả.")
+		#	puts "khong tim thay tu nay"
+		#end
+		
+		respond_to do |format|
+			format.html {render :text => res.body, :layout => false}
+		end
+		
+		
+		@word = Word.find_by_word(keyword);
+		
+		if @word.nil? then
+			@word = Word.new
 		end
 		
 		@word.updated_at  = Time.now

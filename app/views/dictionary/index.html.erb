@@ -1,12 +1,11 @@
 
 <style type='text/css'>
 #id_left_column {
-	width: 450px;
-	float:left
+	
 
 }
 #id_div_latest_words {
-	float:right;
+	
 }
 
 
@@ -25,6 +24,9 @@ li input {
 	border:none;
 }
 
+#id_ul_latest_words li {
+	display:inline;
+}
 
 
 </style>
@@ -35,11 +37,11 @@ li input {
  <div id='id_left_column'>
  	<input id="id_textbox_word" type = 'text' onkeypress='onkeyPress(event)' > </input>
  	<input id="id_button_submit"type = 'button' value='submit'> </input>
- 	
+ 	<hr/>
  	<div id="id_meaning">
  	</div>
  </div>                                                                                              
- 	
+<hr/> 	
  <div id = "id_div_latest_words">
  	<ul id="id_ul_latest_words">
  	</ul>
@@ -216,7 +218,7 @@ function requestLatestWords(event) {
     			}
     			input.word = list[i].word;
     			input.addEventListener("keypress", note_onKeyPress, false);
-    			li.appendChild(input);
+    			//li.appendChild(input);
     			
     			
     			ul.appendChild(li);
